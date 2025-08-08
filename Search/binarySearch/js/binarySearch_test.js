@@ -1,8 +1,7 @@
 import assert from "assert";
-import factorial from "./factorial.js";
+import binarySearch from "./binarySearch.js";
 
-assert.strictEqual(factorial(0), 1, "result != 1");
-assert.strictEqual(factorial(1), 1, "result != 1");
-assert.strictEqual(factorial(7), 5040, "result != 5040");
+assert.strictEqual(binarySearch([1, 2, 3, 4, 5], 3), 2, "result != 2");
+assert.strictEqual(binarySearch([1, 2, 3, 4, 5], 7), -1, "result != -1");
 
 console.log("All tests passed");
