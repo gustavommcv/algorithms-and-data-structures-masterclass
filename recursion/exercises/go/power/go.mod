@@ -1,0 +1,5 @@
+module github.com/gustavommcv/algorithms-and-data-structures-masterclass/recursion/exercises/go/power
+
+go 1.24.5
+
+require golang.org/x/exp v0.0.0-20250718183923-645b1fa84792
