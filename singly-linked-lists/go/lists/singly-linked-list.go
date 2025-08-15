@@ -5,109 +5,111 @@ import (
 	"strings"
 )
 
-// Contains a 'value' field as well as 'next' field
-type node[T any] struct {
-	next  *node[T]
-	value T
+// Node represents a single element in a singly linked list.
+// It contains a generic Value field to store data and a Next pointer
+// to reference the subsequent node in the list.
+type Node[T any] struct {
+	Next  *Node[T] // Pointer to the next node in the list
+	Value T        // The value stored in this node
 }
 
-// Singly linked list is a linear collection of data elements whose order is not given by their physical placement in memory.
+// SinglyLinkedList represents a linear collection of elements where each element
+// points to the next one in sequence. This implementation maintains references
+// to both the Head (first element) and Tail (last element) of the list,
+// along with a Length counter for efficient size tracking.
 type SinglyLinkedList[T any] struct {
-	head   *node[T]
-	tail   *node[T]
-	length int
+	Head   *Node[T] // Pointer to the first node in the list
+	Tail   *Node[T] // Pointer to the last node in the list
+	Length int      // Number of nodes in the list
 }
 
-// Insert node at the end (tail)
+// Push adds a new node with the given value to the end (tail) of the list.
+// Returns the modified list to allow method chaining.
+// Time complexity: O(1) as we maintain a Tail reference.
 func (s *SinglyLinkedList[T]) Push(n T) *SinglyLinkedList[T] {
-	newNode := &node[T]{
-		next:  nil,
-		value: n,
+	newNode := &Node[T]{
+		Next:  nil,
+		Value: n,
 	}
 
-	if s.head == nil {
-		s.head = newNode
-		s.tail = newNode
-		s.length++
+	if s.Head == nil {
+		s.Head = newNode
+		s.Tail = newNode
+		s.Length++
 		return s
 	}
 
-	s.tail.next = newNode
-	s.tail = newNode
-	s.length++
+	s.Tail.Next = newNode
+	s.Tail = newNode
+	s.Length++
 	return s
 }
 
-// Insert node at the beggining (head)
+// Unshift adds a new node with the given value to the beginning (head) of the list.
+// Returns the modified list to allow method chaining.
+// Time complexity: O(1) as we only modify the Head reference.
 func (s *SinglyLinkedList[T]) Unshift(n T) *SinglyLinkedList[T] {
-	newNode := &node[T]{
-		next:  nil,
-		value: n,
+	newNode := &Node[T]{
+		Next:  nil,
+		Value: n,
 	}
 
-	if s.head == nil {
-		s.head = newNode
-		s.tail = newNode
-		s.length++
+	if s.Head == nil {
+		s.Head = newNode
+		s.Tail = newNode
+		s.Length++
 		return s
 	}
 
-	newNode.next = s.head
-	s.head = newNode
-	s.length++
+	newNode.Next = s.Head
+	s.Head = newNode
+	s.Length++
 
 	return s
 }
 
-// Remove a node at the end (tail)
-func (s *SinglyLinkedList[T]) Pop() *SinglyLinkedList[T] {
-	if s.head == nil {
+// Pop removes and returns the last node (tail) from the list.
+// Returns nil if the list is empty.
+// Time complexity: O(n) as we need to find the penultimate node.
+func (s *SinglyLinkedList[T]) Pop() *Node[T] {
+	if s.Head == nil {
 		return nil
 	}
 
+	currentTail := s.Tail
 	penultimateNode := s.penultimateNode()
 
-	penultimateNode.next = nil
-	s.tail = penultimateNode
-	s.length--
+	penultimateNode.Next = nil
+	s.Tail = penultimateNode
+	s.Length--
 
-	return s
+	return currentTail
 }
 
-func (s *SinglyLinkedList[T]) Shift() *SinglyLinkedList[T] {
-	if s.head == nil {
+// Shift removes and returns the first node (head) from the list.
+// Returns nil if the list is empty.
+// Time complexity: O(1) as we only modify the Head reference.
+func (s *SinglyLinkedList[T]) Shift() *Node[T] {
+	if s.Head == nil {
 		return nil
 	}
 
-	s.head = s.head.next
-	s.length--
+	currentHead := s.Head
+	s.Head = s.Head.Next
+	s.Length--
 
-	return s
+	return currentHead
 }
 
-func (s *SinglyLinkedList[T]) penultimateNode() *node[T] {
-	currentElement := s.head
-
-	if currentElement == nil {
-		return nil
-	}
-
-	for {
-		if currentElement.next == s.tail {
-			break
-		}
-
-		currentElement = currentElement.next
-	}
-
-	return currentElement
-}
-
-// To string method: [list] - head / tail / lenght
+// String returns a formatted string representation of the list showing:
+// - All elements in square brackets, comma-separated
+// - The current head node's value
+// - The current tail node's value
+// - The current length of the list
 func (s *SinglyLinkedList[T]) String() string {
 	var sb strings.Builder
 
-	currentElement := s.head
+	currentElement := s.Head
 	if currentElement == nil {
 		return ""
 	}
@@ -118,16 +120,37 @@ func (s *SinglyLinkedList[T]) String() string {
 			break
 		}
 
-		sb.WriteString(fmt.Sprintf("%v", currentElement.value))
+		sb.WriteString(fmt.Sprintf("%v", currentElement.Value))
 
-		if !(currentElement == s.tail) {
+		if !(currentElement == s.Tail) {
 			sb.WriteString(", ")
 		}
 
-		currentElement = currentElement.next
+		currentElement = currentElement.Next
 	}
 	sb.WriteString("]")
 
-	sb.WriteString(fmt.Sprintf(" - Head: %v / Tail: %v / Length: %v", s.head.value, s.tail.value, s.length))
+	sb.WriteString(fmt.Sprintf(" - Head: %v / Tail: %v / Length: %v", s.Head.Value, s.Tail.Value, s.Length))
 	return sb.String()
+}
+
+// penultimateNode is a helper method that finds and returns the second-to-last node in the list.
+// Returns nil if the list is empty or has only one element.
+// Time complexity: O(n) as it must traverse the list until the penultimate node.
+func (s *SinglyLinkedList[T]) penultimateNode() *Node[T] {
+	currentElement := s.Head
+
+	if currentElement == nil {
+		return nil
+	}
+
+	for {
+		if currentElement.Next == s.Tail {
+			break
+		}
+
+		currentElement = currentElement.Next
+	}
+
+	return currentElement
 }

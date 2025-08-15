@@ -17,9 +17,15 @@ func main() {
 
 	fmt.Println("list: " + list.String())
 
-	fmt.Println("list: " + list.Pop().Pop().String())
+	list.Pop()
 
-	fmt.Println("list: " + list.Shift().String())
+	fmt.Println("list: " + list.String())
+
+	list.Shift()
+
+	fmt.Println("list: " + list.String())
 
 	fmt.Println("list: " + list.Unshift(500).String())
+
+	fmt.Println("list: " + list.Push(500).String())
 }
