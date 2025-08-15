@@ -56,7 +56,12 @@ func (s *SinglyLinkedList[T]) String() string {
 			break
 		}
 
-		sb.WriteString(fmt.Sprintf("%v,", currentElement.data))
+		sb.WriteString(fmt.Sprintf("%v", currentElement.data))
+
+		if !(currentElement == s.tail) {
+			sb.WriteString(", ")
+		}
+
 		currentElement = currentElement.next
 	}
 	sb.WriteString("]")
