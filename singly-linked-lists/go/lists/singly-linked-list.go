@@ -22,16 +22,18 @@ func (s *SinglyLinkedList[T]) Append(n T) {
 		data: n,
 	}
 
+	if s.head == nil {
+		s.head = newNode
+		s.length++
+		return
+	}
+
 	if s.length == 1 {
 		tail := newNode
 		s.head.next = tail
 		s.tail = tail
 		s.length++
-	}
-
-	if s.head == nil {
-		s.head = newNode
-		s.length++
+		return
 	}
 
 	if s.tail != nil {
