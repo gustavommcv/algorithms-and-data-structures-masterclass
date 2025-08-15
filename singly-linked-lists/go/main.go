@@ -7,13 +7,13 @@ import (
 )
 
 func main() {
-	l := lists.SinglyLinkedList[int]{}
+	list := new(lists.SinglyLinkedList[int])
 
-	l.Append(4)
-	l.Append(4)
-	l.Append(5)
-	l.Append(4)
-	l.Append(8)
+	list.Push(0)
+	list.Push(5)
+	list.Push(4)
+	list.Push(8)
+	list.Push(4).Push(10)
 
-	fmt.Println("list: " + l.String())
+	fmt.Println("list: " + list.String())
 }

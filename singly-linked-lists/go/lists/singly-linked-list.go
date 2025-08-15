@@ -5,43 +5,39 @@ import (
 	"strings"
 )
 
+// Contains a 'value' field as well as 'next' field
 type node[T any] struct {
-	next *node[T]
-	data T
+	next  *node[T]
+	value T
 }
 
+// Singly linked list is a linear collection of data elements whose order is not given by their physical placement in memory.
 type SinglyLinkedList[T any] struct {
 	head   *node[T]
 	tail   *node[T]
 	length int
 }
 
-func (s *SinglyLinkedList[T]) Append(n T) {
+// Insert value at the end (tail)
+func (s *SinglyLinkedList[T]) Push(n T) *SinglyLinkedList[T] {
 	newNode := &node[T]{
-		next: nil,
-		data: n,
+		next:  nil,
+		value: n,
 	}
 
 	if s.head == nil {
 		s.head = newNode
-		s.length++
-		return
-	}
-
-	if s.length == 1 {
-		tail := newNode
-		s.head.next = tail
-		s.tail = tail
-		s.length++
-		return
-	}
-
-	if s.tail != nil {
-		s.tail.next = newNode
 		s.tail = newNode
+		s.length++
+		return s
 	}
+
+	s.tail.next = newNode
+	s.tail = newNode
+	return s
 }
 
+// To string method: [list] - head / tail
 func (s *SinglyLinkedList[T]) String() string {
 	var sb strings.Builder
 
@@ -56,7 +52,7 @@ func (s *SinglyLinkedList[T]) String() string {
 			break
 		}
 
-		sb.WriteString(fmt.Sprintf("%v", currentElement.data))
+		sb.WriteString(fmt.Sprintf("%v", currentElement.value))
 
 		if !(currentElement == s.tail) {
 			sb.WriteString(", ")
@@ -66,5 +62,6 @@ func (s *SinglyLinkedList[T]) String() string {
 	}
 	sb.WriteString("]")
 
+	sb.WriteString(fmt.Sprintf(" - Head: %v / Tail: %v", s.head.value, s.tail.value))
 	return sb.String()
 }
