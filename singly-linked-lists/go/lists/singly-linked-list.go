@@ -18,7 +18,7 @@ type SinglyLinkedList[T any] struct {
 	length int
 }
 
-// Insert value at the end (tail)
+// Insert node at the end (tail)
 func (s *SinglyLinkedList[T]) Push(n T) *SinglyLinkedList[T] {
 	newNode := &node[T]{
 		next:  nil,
@@ -34,10 +34,55 @@ func (s *SinglyLinkedList[T]) Push(n T) *SinglyLinkedList[T] {
 
 	s.tail.next = newNode
 	s.tail = newNode
+	s.length++
 	return s
 }
 
-// To string method: [list] - head / tail
+// Remove a node at the end (tail)
+func (s *SinglyLinkedList[T]) Pop() *SinglyLinkedList[T] {
+	if s.head == nil {
+		return nil
+	}
+
+	penultimateNode := s.penultimateNode()
+
+	penultimateNode.next = nil
+	s.tail = penultimateNode
+	s.length--
+
+	return s
+}
+
+func (s *SinglyLinkedList[T]) Shift() *SinglyLinkedList[T] {
+	if s.head == nil {
+		return nil
+	}
+
+	s.head = s.head.next
+	s.length--
+
+	return s
+}
+
+func (s *SinglyLinkedList[T]) penultimateNode() *node[T] {
+	currentElement := s.head
+
+	if currentElement == nil {
+		return nil
+	}
+
+	for {
+		if currentElement.next == s.tail {
+			break
+		}
+
+		currentElement = currentElement.next
+	}
+
+	return currentElement
+}
+
+// To string method: [list] - head / tail / lenght
 func (s *SinglyLinkedList[T]) String() string {
 	var sb strings.Builder
 
@@ -62,6 +107,6 @@ func (s *SinglyLinkedList[T]) String() string {
 	}
 	sb.WriteString("]")
 
-	sb.WriteString(fmt.Sprintf(" - Head: %v / Tail: %v", s.head.value, s.tail.value))
+	sb.WriteString(fmt.Sprintf(" - Head: %v / Tail: %v / Length: %v", s.head.value, s.tail.value, s.length))
 	return sb.String()
 }
