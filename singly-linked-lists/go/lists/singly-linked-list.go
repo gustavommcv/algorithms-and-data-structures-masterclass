@@ -38,6 +38,27 @@ func (s *SinglyLinkedList[T]) Push(n T) *SinglyLinkedList[T] {
 	return s
 }
 
+// Insert node at the beggining (head)
+func (s *SinglyLinkedList[T]) Unshift(n T) *SinglyLinkedList[T] {
+	newNode := &node[T]{
+		next:  nil,
+		value: n,
+	}
+
+	if s.head == nil {
+		s.head = newNode
+		s.tail = newNode
+		s.length++
+		return s
+	}
+
+	newNode.next = s.head
+	s.head = newNode
+	s.length++
+
+	return s
+}
+
 // Remove a node at the end (tail)
 func (s *SinglyLinkedList[T]) Pop() *SinglyLinkedList[T] {
 	if s.head == nil {

@@ -20,4 +20,6 @@ func main() {
 	fmt.Println("list: " + list.Pop().Pop().String())
 
 	fmt.Println("list: " + list.Shift().String())
+
+	fmt.Println("list: " + list.Unshift(500).String())
 }
