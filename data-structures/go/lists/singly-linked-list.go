@@ -1,6 +1,7 @@
 package lists
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -68,12 +69,73 @@ func (s *SinglyLinkedList[T]) Unshift(n T) *SinglyLinkedList[T] {
 	return s
 }
 
+// Get retrieves the node at the specified position in the list.
+// Positions are zero-indexed (0 = head, length-1 = tail).
+// Returns:
+// - The node at the requested position, or
+// - An error if:
+//   - Position is negative
+//   - Position is out of bounds (>= list length)
+//   - List is empty
+//
+// Time complexity: O(n) in worst case as it may need to traverse the entire list.
+func (s *SinglyLinkedList[T]) Get(position int) (*Node[T], error) {
+	if position < 0 {
+		return nil, errors.New("position must be positive")
+	}
+
+	if position >= s.Length {
+		return nil, fmt.Errorf("position %d exceeds list length %d", position, s.Length)
+	}
+
+	current := s.Head
+
+	if current == nil {
+		return nil, errors.New("list is empty")
+	}
+
+	if position == 0 {
+		return current, nil
+	}
+
+	if position == s.Length-1 {
+		return s.Tail, nil
+	}
+
+	i := 0
+	for {
+		if i == position {
+			return current, nil
+		}
+
+		current = current.Next
+
+		if current == nil {
+			return nil, fmt.Errorf("position %d exceeds list length %d", position, s.Length)
+		}
+
+		i++
+	}
+}
+
 // Pop removes and returns the last node (tail) from the list.
-// Returns nil if the list is empty.
+// Handles special cases:
+// - Returns nil if the list is empty
+// - Properly resets Head and Tail when removing the last element
+// Returns the removed node.
 // Time complexity: O(n) as we need to find the penultimate node.
 func (s *SinglyLinkedList[T]) Pop() *Node[T] {
 	if s.Head == nil {
 		return nil
+	}
+
+	if s.Head.Next == nil {
+		currentHead := s.Head
+		s.Head = nil
+		s.Tail = nil
+		s.Length--
+
+		return currentHead
 	}
 
 	currentTail := s.Tail
@@ -111,7 +173,8 @@ func (s *SinglyLinkedList[T]) String() string {
 
 	currentElement := s.Head
 	if currentElement == nil {
-		return ""
+		sb.WriteString(fmt.Sprintf("[] - Length: %v", s.Length))
+		return sb.String()
 	}
 
 	sb.WriteString("[")
@@ -130,7 +193,8 @@ func (s *SinglyLinkedList[T]) String() string {
 	}
 	sb.WriteString("]")
 
-	sb.WriteString(fmt.Sprintf(" - Head: %v / Tail: %v / Length: %v", s.Head.Value, s.Tail.Value, s.Length))
+	sb.WriteString(fmt.Sprintf(" - Length: %v", s.Length))
+	sb.WriteString(fmt.Sprintf(" / Head: %v / Tail: %v", s.Head.Value, s.Tail.Value))
 	return sb.String()
 }
 
