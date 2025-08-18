@@ -33,6 +33,7 @@ func (s *SinglyLinkedList[T]) Push(n T) *SinglyLinkedList[T] {
 	}
 
 	if s.Head == nil {
+		// First node becomes both Head and Tail
 		s.Head = newNode
 		s.Tail = newNode
 		s.Length++
@@ -55,6 +56,7 @@ func (s *SinglyLinkedList[T]) Unshift(n T) *SinglyLinkedList[T] {
 	}
 
 	if s.Head == nil {
+		// First node becomes both Head and Tail
 		s.Head = newNode
 		s.Tail = newNode
 		s.Length++
@@ -71,19 +73,15 @@ func (s *SinglyLinkedList[T]) Unshift(n T) *SinglyLinkedList[T] {
 // Get retrieves the node at the specified position in the list.
 // Positions are zero-indexed (0 = head, length-1 = tail).
 // Returns:
-// - The node at the requested position, or
-// - An ok as false if:
+// - (*Node, true) if the node was found
+// - (nil, false) if:
 //   - Position is negative
 //   - Position is out of bounds (>= list length)
 //   - List is empty
 //
 // Time complexity: O(n) in worst case as it may need to traverse the entire list.
 func (s *SinglyLinkedList[T]) Get(position int) (*Node[T], bool) {
-	if position < 0 {
-		return nil, false
-	}
-
-	if position >= s.Length {
+	if position < 0 || position >= s.Length {
 		return nil, false
 	}
 
@@ -120,9 +118,9 @@ func (s *SinglyLinkedList[T]) Get(position int) (*Node[T], bool) {
 // Set updates the value of the node at the specified position in the list.
 // Returns:
 // - true if the value was successfully updated
-// - false if not
+// - false if the index is out of bounds or the list is empty
 //
-// Time complexity: O(n) in worst case as it uses Get() which may need to traverse the list.
+// Time complexity: O(n) in worst case as it uses Get().
 func (s *SinglyLinkedList[T]) Set(index int, value T) bool {
 	node, ok := s.Get(index)
 	if !ok {
@@ -133,6 +131,14 @@ func (s *SinglyLinkedList[T]) Set(index int, value T) bool {
 	return true
 }
 
+// Insert inserts a new node with the given value at the specified index.
+// Shifts the existing node at that position (and subsequent ones) to the right.
+// Special cases:
+// - index == 0 → behaves like Unshift
+// - index == Length → behaves like Push
+// Returns false if index is out of bounds (<0 or >Length).
+//
+// Time complexity: O(n) due to traversal when inserting in the middle.
 func (s *SinglyLinkedList[T]) Insert(index int, value T) bool {
 	if index > s.Length || index < 0 {
 		return false
@@ -192,8 +198,10 @@ func (s *SinglyLinkedList[T]) Pop() *Node[T] {
 }
 
 // Shift removes and returns the first node (head) from the list.
-// Returns nil if the list is empty.
-// Time complexity: O(1) as we only modify the Head reference.
+// Special cases:
+// - Returns nil if the list is empty
+// - Updates Tail if removing the last element
+// Time complexity: O(1).
 func (s *SinglyLinkedList[T]) Shift() *Node[T] {
 	if s.Head == nil {
 		return nil
@@ -243,7 +251,7 @@ func (s *SinglyLinkedList[T]) String() string {
 
 // penultimateNode is a helper method that finds and returns the second-to-last node in the list.
 // Returns nil if the list is empty or has only one element.
-// Time complexity: O(n) as it must traverse the list until the penultimate node.
+// Time complexity: O(n).
 func (s *SinglyLinkedList[T]) penultimateNode() *Node[T] {
 	currentElement := s.Head
 
