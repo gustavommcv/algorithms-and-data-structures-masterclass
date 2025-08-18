@@ -167,6 +167,34 @@ func (s *SinglyLinkedList[T]) Insert(index int, value T) bool {
 	return true
 }
 
+// Remove deletes and returns the node at the specified index in the list.
+// Handles special cases:
+// - Returns nil if index is out of bounds (index < 0 or >= Length)
+// - Uses Shift() if index == 0
+// - Uses Pop() if index == Length-1
+// Time complexity: O(n) in the worst case, as traversal may be required.
+func (s *SinglyLinkedList[T]) Remove(index int) *Node[T] {
+	if index >= s.Length || index < 0 {
+		return nil
+	}
+
+	if index == 0 {
+		return s.Shift()
+	}
+
+	if index == s.Length-1 {
+		return s.Pop()
+	}
+
+	prev, _ := s.Get(index - 1)
+	removed := prev.Next
+
+	prev.Next = removed.Next
+	s.Length--
+
+	return removed
+}
+
 // Pop removes and returns the last node (tail) from the list.
 // Handles special cases:
 // - Returns nil if the list is empty
