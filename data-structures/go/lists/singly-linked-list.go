@@ -154,14 +154,14 @@ func (s *SinglyLinkedList[T]) Insert(index int, value T) bool {
 		return true
 	}
 
-	nodeBefore, _ := s.Get(index - 1)
+	prev, _ := s.Get(index - 1)
 
 	newNode := &Node[T]{
-		Next:  nodeBefore.Next,
+		Next:  prev.Next,
 		Value: value,
 	}
 
-	nodeBefore.Next = newNode
+	prev.Next = newNode
 	s.Length++
 
 	return true
