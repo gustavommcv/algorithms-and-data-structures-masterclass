@@ -11,9 +11,12 @@ func main() {
 
 	list.Push(0)
 	list.Push(0)
+	list.Push(0)
+	list.Push(0)
+	list.Push(0)
 
-	list.Shift()
 	list.Set(0, 12)
+	list.Insert(3, 25)
 
 	fmt.Println("list: " + list.String())
 }

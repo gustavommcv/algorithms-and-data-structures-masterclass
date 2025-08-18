@@ -1,7 +1,6 @@
 package lists
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -73,45 +72,45 @@ func (s *SinglyLinkedList[T]) Unshift(n T) *SinglyLinkedList[T] {
 // Positions are zero-indexed (0 = head, length-1 = tail).
 // Returns:
 // - The node at the requested position, or
-// - An error if:
+// - An ok as false if:
 //   - Position is negative
 //   - Position is out of bounds (>= list length)
 //   - List is empty
 //
 // Time complexity: O(n) in worst case as it may need to traverse the entire list.
-func (s *SinglyLinkedList[T]) Get(position int) (*Node[T], error) {
+func (s *SinglyLinkedList[T]) Get(position int) (*Node[T], bool) {
 	if position < 0 {
-		return nil, errors.New("position must be positive")
+		return nil, false
 	}
 
 	if position >= s.Length {
-		return nil, fmt.Errorf("position %d exceeds list length %d", position, s.Length)
+		return nil, false
 	}
 
 	current := s.Head
 
 	if current == nil {
-		return nil, errors.New("list is empty")
+		return nil, false
 	}
 
 	if position == 0 {
-		return current, nil
+		return current, true
 	}
 
 	if position == s.Length-1 {
-		return s.Tail, nil
+		return s.Tail, true
 	}
 
 	i := 0
 	for {
 		if i == position {
-			return current, nil
+			return current, true
 		}
 
 		current = current.Next
 
 		if current == nil {
-			return nil, nil
+			return nil, false
 		}
 
 		i++
@@ -121,24 +120,43 @@ func (s *SinglyLinkedList[T]) Get(position int) (*Node[T], error) {
 // Set updates the value of the node at the specified position in the list.
 // Returns:
 // - true if the value was successfully updated
-// - false if:
-//   - The position is out of bounds
-//   - The list is empty
-//   - The node couldn't be found
+// - false if not
 //
 // Time complexity: O(n) in worst case as it uses Get() which may need to traverse the list.
 func (s *SinglyLinkedList[T]) Set(index int, value T) bool {
-	node, err := s.Get(index)
-
-	if err != nil {
-		return false
-	}
-
-	if node == nil {
+	node, ok := s.Get(index)
+	if !ok {
 		return false
 	}
 
 	node.Value = value
+	return true
+}
+
+func (s *SinglyLinkedList[T]) Insert(index int, value T) bool {
+	if index > s.Length || index < 0 {
+		return false
+	}
+
+	if index == 0 {
+		s.Unshift(value)
+		return true
+	}
+
+	if index == s.Length {
+		s.Push(value)
+		return true
+	}
+
+	nodeBefore, _ := s.Get(index - 1)
+
+	newNode := &Node[T]{
+		Next:  nodeBefore.Next,
+		Value: value,
+	}
+
+	nodeBefore.Next = newNode
+	s.Length++
 
 	return true
 }
