@@ -111,11 +111,36 @@ func (s *SinglyLinkedList[T]) Get(position int) (*Node[T], error) {
 		current = current.Next
 
 		if current == nil {
-			return nil, fmt.Errorf("position %d exceeds list length %d", position, s.Length)
+			return nil, nil
 		}
 
 		i++
 	}
+}
+
+// Set updates the value of the node at the specified position in the list.
+// Returns:
+// - true if the value was successfully updated
+// - false if:
+//   - The position is out of bounds
+//   - The list is empty
+//   - The node couldn't be found
+//
+// Time complexity: O(n) in worst case as it uses Get() which may need to traverse the list.
+func (s *SinglyLinkedList[T]) Set(index int, value T) bool {
+	node, err := s.Get(index)
+
+	if err != nil {
+		return false
+	}
+
+	if node == nil {
+		return false
+	}
+
+	node.Value = value
+
+	return true
 }
 
 // Pop removes and returns the last node (tail) from the list.

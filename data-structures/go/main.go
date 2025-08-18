@@ -13,7 +13,7 @@ func main() {
 	list.Push(0)
 
 	list.Shift()
-	list.Shift()
+	list.Set(0, 12)
 
 	fmt.Println("list: " + list.String())
 }
